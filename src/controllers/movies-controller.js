@@ -1,7 +1,7 @@
 const HttpError = require('../models/http-error');
 const pool = require('../db');
 
-const getMovieById = (request, response, next) => {
+const getMovieById = async (request, response, next) => {
   const movieId = request.params.id;
 
   pool.query(

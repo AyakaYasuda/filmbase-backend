@@ -36,7 +36,6 @@ const getAllMembers = async (request, response, next) => {
     }
 
     response.status(200).json({
-      message: 'Successfully fetched all members',
       members: res.rows,
     });
   });
