@@ -5,7 +5,8 @@ CREATE TABLE members(
     member_id serial,
     email text,
     password text,
-    favorite_movies int[]
+    favorite_movies int[],
+    UNIQUE(member_id)
 );
 
 CREATE TABLE movies(
@@ -23,12 +24,16 @@ CREATE TABLE reviews(
     reviewer_id int,
     movie_id int,
     rate real,
-    comment text
+    comment text,
+    foreign key (reviewer_id) references members(member_id),
+    UNIQUE(review_id)
 );
 
 CREATE TABLE likes(
     member int,
-    review int
+    review int,
+    foreign key (member) references members(member_id),
+    foreign key (review) references reviews(review_id)
 );
 
 INSERT INTO members(email, password, favorite_movies) 
