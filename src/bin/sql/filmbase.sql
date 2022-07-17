@@ -3,10 +3,10 @@
 
 CREATE TABLE members(
     member_id serial,
-    name character varying(50),
     email text,
     password text,
-    favorite_movies int[]
+    favorite_movies int[],
+    UNIQUE(member_id)
 );
 
 CREATE TABLE movies(
@@ -20,28 +20,33 @@ CREATE TABLE movies(
 
 CREATE TABLE reviews(
     review_id serial,
-    reviewer int,
-    movie int,
+    reviewer character varying(50),
+    reviewer_id int,
+    movie_id int,
     rate real,
-    review_comment text
+    comment text,
+    foreign key (reviewer_id) references members(member_id),
+    UNIQUE(review_id)
 );
 
 CREATE TABLE likes(
-    member character varying(50),
-    review int
+    member int,
+    review int,
+    foreign key (member) references members(member_id),
+    foreign key (review) references reviews(review_id)
 );
 
-INSERT INTO members(name, email, password, favorite_movies) 
-VALUES ('testuser', 'testuser@test.com', 'password', '{12345}');
+INSERT INTO members(email, password, favorite_movies) 
+VALUES ('testuser@test.com', 'password', '{12345}');
 
 INSERT INTO movies(image_path, title, overview, release_date, vote)
 VALUES
 ('https://i.pinimg.com/originals/4f/e0/5c/4fe05c0a2d170a2261e6501618f913bd.png', 'Frozen', 'The film depicts a princess who sets off on a journey alongside an iceman, his reindeer, and a snowman to find her estranged sister, whose icy powers have inadvertently trapped their kingdom in eternal winter.', '2013-11-27', 3.8);
 
-INSERT INTO reviews(reviewer, movie, rate, review_comment)
+INSERT INTO reviews(reviewer, reviewer_id, movie_id, rate, comment)
 VALUES
-(00001, 12345, 4.5, 'It is genuinely a delightful experience; full of memorable songs and fun moments & lots of dry humour.');
+('testuser', 1, 1, 4.5, 'It is genuinely a delightful experience; full of memorable songs and fun moments & lots of dry humour.');
 
 INSERT INTO likes(member, review)
 VALUES
-('another-testuser', 10000);
+(1, 1);

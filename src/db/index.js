@@ -12,12 +12,4 @@ const pool = new Pool({
 //   },
 });
 
-pool.query('SELECT * FROM members', (err, res) => {
-  if (err) {
-    return console.log(err);
-  }
-
-  console.log(res);
-});
-
 module.exports = pool;
