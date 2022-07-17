@@ -5,9 +5,7 @@ const pool = require('../db');
 const HttpError = require('../models/http-error');
 
 const signup = async (request, response, next) => {
-  response.status(201).json({
-    message: 'Sign up successfully',
-  });
+  response.status(201).end();
 };
 
 const login = async (request, response, next) => {

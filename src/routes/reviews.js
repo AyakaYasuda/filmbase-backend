@@ -20,5 +20,15 @@ router.post(
   passport.authenticate('jwt', { session: false }),
   reviewsController.createReview
 );
+router.put(
+  '/:rid',
+  passport.authenticate('jwt', { session: false }),
+  reviewsController.editReview
+);
+router.delete(
+  '/:rid',
+  passport.authenticate('jwt', { session: false }),
+  reviewsController.deleteReview
+);
 
 module.exports = router;

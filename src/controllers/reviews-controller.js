@@ -74,9 +74,91 @@ const createReview = async (request, response, next) => {
             return next(error);
           }
 
-          response
-            .status(201)
-            .json({ message: 'Successfully created new review' });
+          response.status(201).end();
+        }
+      );
+    }
+  );
+};
+
+const editReview = async (request, response, next) => {
+  const reviewId = request.params.rid;
+  const reqBody = request.body;
+
+  pool.query(
+    'SELECT * FROM reviews WHERE review_id=($1)',
+    [reviewId],
+    (err, res) => {
+      if (err) {
+        const error = new Error(
+          'Failed to fetch review by the provided review id',
+          500
+        );
+        return next(error);
+      }
+
+      if (res.rows && res.rows.length === 0) {
+        const error = new Error('Review not found', 404);
+        return next(error);
+      }
+
+      const keys = ['rate', 'comment'];
+      let fields = [];
+
+      keys.forEach((key) => {
+        if (reqBody[key]) fields.push(key);
+      });
+
+      fields.forEach((field, idx) => {
+        pool.query(
+          `UPDATE reviews SET ${field}=($1) WHERE review_id=($2)`,
+          [reqBody[field], reviewId],
+          (err, res) => {
+            if (err) {
+              const error = new HttpError('Failed to update the review', 500);
+              return next(error);
+            }
+
+            if (idx === fields.length - 1) {
+              response.status(204).end();
+            }
+          }
+        );
+      });
+    }
+  );
+};
+
+const deleteReview = async (request, response, next) => {
+  const reviewId = request.params.rid;
+
+  pool.query(
+    'SELECT * FROM reviews WHERE review_id=($1)',
+    [reviewId],
+    (err, res) => {
+      if (err) {
+        const error = new Error(
+          'Failed to fetch review by the provided review id',
+          500
+        );
+        return next(error);
+      }
+
+      if (res.rows && res.rows.length === 0) {
+        const error = new Error('Review not found', 404);
+        return next(error);
+      }
+
+      pool.query(
+        'DELETE FROM reviews WHERE review_id=($1)',
+        [reviewId],
+        (err, res) => {
+          if (err) {
+            const error = new HttpError('Failed to delete the review', 500);
+            return next(error);
+          }
+
+          response.status(204).end();
         }
       );
     }
@@ -86,3 +168,5 @@ const createReview = async (request, response, next) => {
 exports.getAllReviews = getAllReviews;
 exports.getReviewsByMemberId = getReviewsByMemberId;
 exports.createReview = createReview;
+exports.editReview = editReview;
+exports.deleteReview = deleteReview;
