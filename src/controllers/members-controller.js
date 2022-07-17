@@ -1,51 +1,18 @@
 require('dotenv').config();
 
-const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+const { validationResult } = require('express-validator');
+
 const pool = require('../db');
 const HttpError = require('../models/http-error');
 
 const signup = async (request, response, next) => {
-  const errors = validationResult({
-    name: request.user.name,
-    email: request.user.email,
-    password: request.user.password,
+  response.status(201).json({
+    message: 'Sign up successfully',
   });
-
-  if (!errors.isEmpty()) {
-    const error = new HttpError('Invalid request. Please check your data', 422);
-    return next(error);
-  }
-
-  jwt.sign(
-    { user: request.user },
-    process.env.JWT_SECRET,
-    { expiresIn: '1hr' },
-    (err, token) => {
-      if (err) {
-        const error = new HttpError('Failed to sign up', 500);
-        return next(error);
-      }
-
-      response.json({
-        message: 'Sign up successfully',
-        token: token,
-      });
-    }
-  );
 };
 
 const login = async (request, response, next) => {
-  const errors = validationResult({
-    email: request.user.email,
-    password: request.user.password,
-  });
-
-  if (!errors.isEmpty()) {
-    const error = new HttpError('Invalid request. Please check your data', 422);
-    return next(error);
-  }
-
   jwt.sign(
     { user: request.user },
     process.env.JWT_SECRET,
@@ -56,7 +23,9 @@ const login = async (request, response, next) => {
         return next(error);
       }
 
-      response.json({ message: 'Log in successfully', token: token });
+      response
+        .status(200)
+        .json({ message: 'Log in successfully', token: token });
     }
   );
 };
@@ -70,11 +39,37 @@ const getAllMembers = async (request, response, next) => {
 
     response.json({
       message: 'Successfully fetched all members',
-      members: res.rows
+      members: res.rows,
     });
   });
+};
+
+const getMemberById = async (request, response, next) => {
+  const memberId = request.params.id;
+
+  pool.query(
+    'SELECT * FROM members WHERE member_id=($1)',
+    [memberId],
+    (err, res) => {
+      if (err) {
+        const error = new HttpError(
+          'Failed to fetch member by the provided id',
+          500
+        );
+        return next(error);
+      }
+
+      if (res.rows.length === 0) {
+        const error = new HttpError('Member not found', 404);
+        return next(error);
+      }
+
+      response.json({ member: res.rows[0] });
+    }
+  );
 };
 
 exports.signup = signup;
 exports.login = login;
 exports.getAllMembers = getAllMembers;
+exports.getMemberById = getMemberById;

@@ -16,27 +16,25 @@ module.exports = (passport) => {
         passwordField: 'password',
       },
       async (email, password, done) => {
-        try {
-          pool.query(
-            'SELECT * FROM members WHERE email=($1)',
-            [email],
-            (err, res) => {
-              if (err) return done(null, false);
+        pool.query(
+          'SELECT * FROM members WHERE email=($1)',
+          [email],
+          (err, res) => {
+            if (err) return done(null, false);
 
-              const passwordHash = bcrypt.hashSync(password, 10);
+            if (res.rows.length !== 0) return done(null, false);
 
-              pool.query(
-                'INSERT INTO members (email, password, favorite_movies) VALUES($1, $2, $3)',
-                [email, passwordHash, {}],
-                (err, res) => {
-                  return done(null, res.rows);
-                }
-              );
-            }
-          );
-        } catch (error) {
-          done(error);
-        }
+            const passwordHash = bcrypt.hashSync(password, 10);
+
+            pool.query(
+              'INSERT INTO members (email, password, favorite_movies) VALUES($1, $2, $3)',
+              [email, passwordHash, {}],
+              (err, res) => {
+                return done(null, true);
+              }
+            );
+          }
+        );
       }
     )
   );
@@ -51,6 +49,8 @@ module.exports = (passport) => {
           [email],
           (err, res) => {
             if (err) return done(null, false);
+
+            if (res.rows.length === 0) return done(null, false);
 
             const isMatching = bcrypt.compareSync(
               password,
