@@ -12,8 +12,8 @@ router.get('/', (req, res) => {
 });
 
 router.use('/members', members);
-router.use('/movies', movies);
-router.use('/reviews', reviews);
-router.use('/likes', likes);
+// router.use('/movies', movies);
+// router.use('/reviews', reviews);
+// router.use('/likes', likes);
 
 module.exports = router;

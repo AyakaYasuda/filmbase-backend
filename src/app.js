@@ -1,22 +1,17 @@
 require('dotenv').config();
 
 const express = require('express');
-const session = require('express-session');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const methodOverride = require('method-override');
+
 const routes = require('./routes');
 
 const app = express();
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-  })
-);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 app.use(methodOverride('_method'));
 
 app.use('/api', routes);

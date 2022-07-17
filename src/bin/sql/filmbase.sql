@@ -3,7 +3,6 @@
 
 CREATE TABLE members(
     member_id serial,
-    name character varying(50),
     email text,
     password text,
     favorite_movies int[]
@@ -20,7 +19,7 @@ CREATE TABLE movies(
 
 CREATE TABLE reviews(
     review_id serial,
-    reviewer int,
+    reviewer character varying(50),
     movie int,
     rate real,
     review_comment text
@@ -31,8 +30,8 @@ CREATE TABLE likes(
     review int
 );
 
-INSERT INTO members(name, email, password, favorite_movies) 
-VALUES ('testuser', 'testuser@test.com', 'password', '{12345}');
+INSERT INTO members(email, password, favorite_movies) 
+VALUES ('testuser@test.com', 'password', '{12345}');
 
 INSERT INTO movies(image_path, title, overview, release_date, vote)
 VALUES
@@ -40,8 +39,8 @@ VALUES
 
 INSERT INTO reviews(reviewer, movie, rate, review_comment)
 VALUES
-(00001, 12345, 4.5, 'It is genuinely a delightful experience; full of memorable songs and fun moments & lots of dry humour.');
+('testuser', 12345, 4.5, 'It is genuinely a delightful experience; full of memorable songs and fun moments & lots of dry humour.');
 
 INSERT INTO likes(member, review)
 VALUES
-('another-testuser', 10000);
+('another-testuser', 001);
