@@ -1,7 +1,5 @@
 require('dotenv').config();
-
 const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
 
 const pool = require('../db');
 const HttpError = require('../models/http-error');
@@ -37,7 +35,7 @@ const getAllMembers = async (request, response, next) => {
       return next(error);
     }
 
-    response.json({
+    response.status(200).json({
       message: 'Successfully fetched all members',
       members: res.rows,
     });
@@ -53,18 +51,18 @@ const getMemberById = async (request, response, next) => {
     (err, res) => {
       if (err) {
         const error = new HttpError(
-          'Failed to fetch member by the provided id',
+          'Failed to fetch a member by the provided id',
           500
         );
         return next(error);
       }
 
-      if (res.rows.length === 0) {
+      if (res.rows && res.rows.length === 0) {
         const error = new HttpError('Member not found', 404);
         return next(error);
       }
 
-      response.json({ member: res.rows[0] });
+      response.status(200).json({ member: res.rows[0] });
     }
   );
 };
