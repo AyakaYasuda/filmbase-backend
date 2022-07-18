@@ -7,9 +7,15 @@ database=$PG_DATABASE
 
 echo "Configuring database: $database"
 
-dropdb -U $user $database
-createdb -U $user $database
+if [ $ENV != "production" ]; then
+    dropdb -U $user $database
+    createdb -U $user $database
+fi
 
-psql -U $user $database < ./src/bin/sql/filmbase.sql
+psql -U $user $database < ./src/bin/sql/ddl.sql
+
+if [ $ENV != "production" ]; then
+    psql -U $user $database < ./src/bin/sql/filmbase.sql
+fi
 
 echo "$database configured"
