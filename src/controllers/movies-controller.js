@@ -27,4 +27,22 @@ const getMovieById = async (request, response, next) => {
   );
 };
 
+const createMovie = async (request, response, next) => {
+  const { id, imagePath, title, overview, releaseDate, vote } = request.body;
+
+  pool.query(
+    'INSERT INTO movies(movie_id, image_path, title, overview, release_date, vote) VALUES($1, $2, $3, $4, $5, $6)',
+    [id, imagePath, title, overview, releaseDate, vote],
+    (err, res) => {
+      if (err) {
+        const error = new HttpError('Failed to create new movie', 500);
+        return next(error);
+      }
+
+      response.status(201).end();
+    }
+  );
+};
+
 exports.getMovieById = getMovieById;
+exports.createMovie = createMovie;

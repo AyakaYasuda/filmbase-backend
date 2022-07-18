@@ -7,12 +7,13 @@ CREATE TABLE IF NOT EXISTS members(
 );
 
 CREATE TABLE IF NOT EXISTS movies(
-    movie_id serial,
+    movie_id int,
     image_path text,
     title character varying(50),
     overview text,
     release_date date,
-    vote real
+    vote real,
+    UNIQUE(movie_id)
 );
 
 CREATE TABLE IF NOT EXISTS reviews(
@@ -23,6 +24,7 @@ CREATE TABLE IF NOT EXISTS reviews(
     rate real,
     comment text,
     foreign key (reviewer_id) references members(member_id),
+    foreign key (movie_id) references movies(movie_id),
     UNIQUE(review_id)
 );
 

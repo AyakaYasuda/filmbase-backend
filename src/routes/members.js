@@ -41,4 +41,16 @@ router.get(
   membersController.getMemberById
 );
 
+router.put(
+  '/movie/add/:id',
+  passport.authenticate('jwt', { session: false }),
+  membersController.addFavoriteMovie
+);
+
+router.put(
+  '/movie/remove/:id',
+  passport.authenticate('jwt', { session: false }),
+  membersController.removeFavoriteMovie
+);
+
 module.exports = router;

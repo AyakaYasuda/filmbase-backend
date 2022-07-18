@@ -11,4 +11,10 @@ router.get(
   moviesController.getMovieById
 );
 
+router.post(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  moviesController.createMovie
+);
+
 module.exports = router;
