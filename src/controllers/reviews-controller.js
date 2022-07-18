@@ -139,58 +139,61 @@ const deleteReview = async (request, response, next) => {
         return next(error);
       }
 
-      if (res.rows && res.rows.length === 0) {
-        const error = new HttpError('Likes not found', 404);
-        return next(error);
-      }
-
-      pool.query(
-        'DELETE FROM likes WHERE review=($1)',
-        [reviewId],
-        (err, res) => {
-          if (err) {
-            const error = new HttpError('Failed to delete likes', 500);
-            return next(error);
-          }
-
-          pool.query(
-            'SELECT * FROM reviews WHERE review_id=($1)',
-            [reviewId],
-            (err, res) => {
-              if (err) {
-                const error = new Error(
-                  'Failed to fetch review by the provided review id',
-                  500
-                );
-                return next(error);
-              }
-
-              if (res.rows && res.rows.length === 0) {
-                const error = new Error('Review not found', 404);
-                return next(error);
-              }
-
-              pool.query(
-                'DELETE FROM reviews WHERE review_id=($1)',
-                [reviewId],
-                (err, res) => {
-                  if (err) {
-                    const error = new HttpError(
-                      'Failed to delete the review',
-                      500
-                    );
-                    return next(error);
-                  }
-
-                  response.status(204).end();
-                }
-              );
+      if (res.rows && res.rows.length !== 0) {
+        pool.query(
+          'DELETE FROM likes WHERE review=($1)',
+          [reviewId],
+          (err, res) => {
+            if (err) {
+              const error = new HttpError('Failed to delete likes', 500);
+              return next(error);
             }
-          );
-        }
-      );
+
+            return;
+          }
+        );
+      }
     }
   );
+
+  pool.query('DELETE FROM likes WHERE review=($1)', [reviewId], (err, res) => {
+    if (err) {
+      const error = new HttpError('Failed to delete likes', 500);
+      return next(error);
+    }
+
+    pool.query(
+      'SELECT * FROM reviews WHERE review_id=($1)',
+      [reviewId],
+      (err, res) => {
+        if (err) {
+          const error = new Error(
+            'Failed to fetch review by the provided review id',
+            500
+          );
+          return next(error);
+        }
+
+        if (res.rows && res.rows.length === 0) {
+          const error = new Error('Review not found', 404);
+          return next(error);
+        }
+
+        pool.query(
+          'DELETE FROM reviews WHERE review_id=($1)',
+          [reviewId],
+          (err, res) => {
+            if (err) {
+              const error = new HttpError('Failed to delete the review', 500);
+              return next(error);
+            }
+
+            response.status(204).end();
+          }
+        );
+      }
+    );
+  });
 };
 
 exports.getAllReviews = getAllReviews;
