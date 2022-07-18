@@ -32,10 +32,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install npm packages
         run: npm install
-      - name: Build page
-        run: npm run build
-        env:
-          CI: false
       - uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
