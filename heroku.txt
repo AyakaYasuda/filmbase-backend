@@ -1,0 +1,6 @@
+ heroku login
+ move to app dir in local by cd XXX
+ heroku git:remote --app filmbase-backend
+ heroku run bash
+ heroku pg:psql
+ 
