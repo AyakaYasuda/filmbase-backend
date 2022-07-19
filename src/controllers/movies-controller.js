@@ -1,7 +1,7 @@
 const HttpError = require('../models/http-error');
 const pool = require('../db');
 
-const getMovies = async (request, response, next) => {
+const getAllMovies = async (request, response, next) => {
   pool.query('SELECT * FROM movies', (err, res) => {
     if (res) {
       const error = new HttpError('Failed to fetch movies', 500);
@@ -60,6 +60,6 @@ const createMovie = async (request, response, next) => {
   );
 };
 
-exports.getMovies = getMovies;
+exports.getAllMovies = getAllMovies;
 exports.getMovieById = getMovieById;
 exports.createMovie = createMovie;

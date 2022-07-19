@@ -5,7 +5,7 @@ require('../auth/passportConfig')(passport);
 const moviesController = require('../controllers/movies-controller');
 const router = Router();
 
-router.get('/', moviesController.getMovies);
+router.get('/', moviesController.getAllMovies);
 
 router.get(
   '/:id',
