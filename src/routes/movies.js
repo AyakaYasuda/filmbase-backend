@@ -5,6 +5,8 @@ require('../auth/passportConfig')(passport);
 const moviesController = require('../controllers/movies-controller');
 const router = Router();
 
+router.get('/', moviesController.getMovies);
+
 router.get(
   '/:id',
   passport.authenticate('jwt', { session: false }),

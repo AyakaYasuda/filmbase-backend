@@ -1,6 +1,22 @@
 const HttpError = require('../models/http-error');
 const pool = require('../db');
 
+const getMovies = async (request, response, next) => {
+  pool.query('SELECT * FROM movies', (err, res) => {
+    if (res) {
+      const error = new HttpError('Failed to fetch movies', 500);
+      return next(error);
+    }
+
+    if (res.rows && res.rows.length === 0) {
+      const error = new HttpError('Movies not found', 404);
+      return next(error);
+    }
+
+    response.status(200).json({ movies: res.rows });
+  });
+};
+
 const getMovieById = async (request, response, next) => {
   const movieId = request.params.id;
 
@@ -44,5 +60,6 @@ const createMovie = async (request, response, next) => {
   );
 };
 
+exports.getMovies = getMovies;
 exports.getMovieById = getMovieById;
 exports.createMovie = createMovie;
