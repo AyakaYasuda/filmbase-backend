@@ -21,7 +21,11 @@ const login = async (request, response, next) => {
 
       response
         .status(200)
-        .json({ message: 'Log in successfully', token: token });
+        .json({
+          message: 'Log in successfully',
+          token: token,
+          userId: request.user.member_id,
+        });
     }
   );
 };

@@ -59,7 +59,7 @@ module.exports = (passport) => {
 
             if (!isMatching) return done(null, false);
 
-            return done(null, res.rows);
+            return done(null, res.rows[0]);
           }
         );
       }
