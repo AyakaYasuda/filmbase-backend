@@ -3,7 +3,7 @@ const pool = require('../db');
 
 const getAllMovies = async (request, response, next) => {
   pool.query('SELECT * FROM movies', (err, res) => {
-    if (res) {
+    if (err) {
       const error = new HttpError('Failed to fetch movies', 500);
       return next(error);
     }
