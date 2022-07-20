@@ -2,7 +2,7 @@ const pool = require('../db');
 const HttpError = require('../models/http-error');
 
 const getAllReviews = async (request, response, next) => {
-  pool.query('SELECT * FROM reviews', (err, res) => {
+  pool.query('SELECT * FROM reviews ORDER BY review_id desc', (err, res) => {
     if (err) {
       const error = new HttpError('Failed to fetch all reviews');
       return next(error);
@@ -21,7 +21,7 @@ const getReviewsByMemberId = async (request, response, next) => {
   const memberId = request.params.uid;
 
   pool.query(
-    'SELECT * FROM reviews WHERE reviewer_id=($1)',
+    'SELECT * FROM reviews WHERE reviewer_id=($1) ORDER BY rate desc',
     [memberId],
     (err, res) => {
       if (err) {
