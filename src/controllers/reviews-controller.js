@@ -17,6 +17,31 @@ const getAllReviews = async (request, response, next) => {
   });
 };
 
+const getReviewById = async (request, response, next) => {
+  const reviewId = request.params.rid;
+
+  pool.query(
+    'SELECT * FROM reviews WHERE review_id=($1)',
+    [reviewId],
+    (err, res) => {
+      if (err) {
+        const error = new HttpError(
+          'Failed to fetch review by the provided review id',
+          500
+        );
+        return next(error);
+      }
+
+      if (res.rows && res.rows.length === 0) {
+        const error = new HttpError('Review not found', 404);
+        return next(error);
+      }
+
+      response.status(200).json({ review: res.rows[0] });
+    }
+  );
+};
+
 const getReviewsByMemberId = async (request, response, next) => {
   const memberId = request.params.uid;
 
@@ -197,6 +222,7 @@ const deleteReview = async (request, response, next) => {
 };
 
 exports.getAllReviews = getAllReviews;
+exports.getReviewById = getReviewById;
 exports.getReviewsByMemberId = getReviewsByMemberId;
 exports.createReview = createReview;
 exports.editReview = editReview;

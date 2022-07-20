@@ -11,6 +11,11 @@ router.get(
   reviewsController.getAllReviews
 );
 router.get(
+  '/:rid',
+  passport.authenticate('jwt', { session: false }),
+  reviewsController.getReviewById
+);
+router.get(
   '/member/:uid',
   passport.authenticate('jwt', { session: false }),
   reviewsController.getReviewsByMemberId
