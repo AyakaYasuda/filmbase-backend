@@ -19,13 +19,11 @@ const login = async (request, response, next) => {
         return next(error);
       }
 
-      response
-        .status(200)
-        .json({
-          message: 'Log in successfully',
-          token: token,
-          userId: request.user.member_id,
-        });
+      response.status(200).json({
+        message: 'Log in successfully',
+        token: token,
+        userId: request.user.member_id,
+      });
     }
   );
 };
@@ -64,6 +62,27 @@ const getMemberById = async (request, response, next) => {
       }
 
       response.status(200).json({ member: res.rows[0] });
+    }
+  );
+};
+
+const getFavoriteMovies = async (request, response, next) => {
+  const { favoriteMoviesId } = request.body;
+
+  pool.query(
+    `SELECT * FROM movies WHERE movie_id IN (${favoriteMoviesId?.join()})`,
+    (err, res) => {
+      if (err) {
+        const error = new HttpError('Failed to fetch movies', 500);
+        return next(error);
+      }
+
+      if (res.rows && res.rows.length === 0) {
+        const error = new HttpError('Movies not found', 404);
+        return next(error);
+      }
+
+      response.status(200).json({ movies: res.rows });
     }
   );
 };
@@ -161,5 +180,6 @@ exports.signup = signup;
 exports.login = login;
 exports.getAllMembers = getAllMembers;
 exports.getMemberById = getMemberById;
+exports.getFavoriteMovies = getFavoriteMovies;
 exports.addFavoriteMovie = addFavoriteMovie;
 exports.removeFavoriteMovie = removeFavoriteMovie;

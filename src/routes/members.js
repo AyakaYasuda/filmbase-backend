@@ -41,6 +41,12 @@ router.get(
   membersController.getMemberById
 );
 
+router.post(
+  '/:id/favorite',
+  passport.authenticate('jwt', { session: false }),
+  membersController.getFavoriteMovies
+);
+
 router.put(
   '/movie/add/:id',
   passport.authenticate('jwt', { session: false }),
