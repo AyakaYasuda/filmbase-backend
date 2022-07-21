@@ -24,7 +24,7 @@ router.post(
 );
 
 router.delete(
-  '/:rid',
+  '/member/:uid/:rid',
   passport.authenticate('jwt', { session: false }),
   likesController.deleteLikes
 );

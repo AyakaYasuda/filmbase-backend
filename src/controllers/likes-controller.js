@@ -59,7 +59,7 @@ const createLike = async (request, response, next) => {
 
 const deleteLikes = async (request, response, next) => {
   const reviewId = request.params.rid;
-  const { memberId } = request.body;
+  const memberId = request.params.uid;
 
   pool.query(
     'SELECT * FROM likes WHERE review=($1) AND member=($2)',
