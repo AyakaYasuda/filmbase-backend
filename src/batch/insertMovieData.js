@@ -25,13 +25,16 @@ const getAllMovies = async (client) => {
     });
 };
 
-const getFilteredMovies = async (client) => {
+const filterOutExistingMovies = async (client) => {
   try {
-    const movies = await getAllMovies(client);
+    // fetch movies stored in database.
+    const storedMovies = await getAllMovies(client);
+
+    // fetch movie data from The Movie Database API
     const { results } = await fetchPopularMovies();
 
     const moviesMap = new Map();
-    for (const movie of movies) {
+    for (const movie of storedMovies) {
       moviesMap.set(movie.movie_id, true);
     }
 
@@ -58,10 +61,16 @@ const createMovie = (client, movieData) => {
 };
 
 const insertMovieData = async () => {
+  console.log(`########### Started Insert Movie Data Batch ###########`);
   const client = await pool.connect();
   try {
+    const filteredMovie = await filterOutExistingMovies(client);
+    if (!filteredMovie) {
+      console.log('No new data found');
+      return;
+    }
+
     await client.query('BEGIN');
-    const filteredMovie = await getFilteredMovies(client);
     for (const movie of filteredMovie) {
       await createMovie(client, movie);
     }
@@ -72,8 +81,10 @@ const insertMovieData = async () => {
   } catch (ex) {
     console.log(ex);
     await client.query('ROLLBACK');
+    console.log('Rollback transaction');
   } finally {
     client.release();
+    console.log('########### Insert movie data finish ###########');
   }
 };
 
