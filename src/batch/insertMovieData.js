@@ -1,24 +1,23 @@
-const fetch = require('node-fetch');
-
 require('dotenv').config();
+const axios = require('axios');
 
 const API_KEY = process.env.MOVIE_DB_API_KEY;
 const pool = require('../db');
 
 const fetchPopularMovies = async () => {
-  const response = await fetch(
-    `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`
-  );
-  return response.json();
+  return axios
+    .get(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`)
+    .then((res) => res.data);
 };
 
 const getAllMovies = async (client) => {
   return client
     .query(
-      `SELECT
-                *
-            FROM
-                movies`
+      `
+        SELECT
+            *
+        FROM
+            movies`
     )
     .then((res) => res.rows)
     .catch((err) => {
