@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "configure": "src/bin/configuredb.sh",
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "dev": "nodemon src/app.js",
+    "insert-movie": "node src/batch/insertMovieData.js"
   },
   "keywords": [],
   "author": "",
