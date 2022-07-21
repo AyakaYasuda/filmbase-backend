@@ -30,7 +30,7 @@ const signup = async (request, response, next) => {
           return next(error);
         }
 
-        response.status(201).end();
+        response.status(200).json({ message: 'Log in successfully', username });
       }
     );
   });
