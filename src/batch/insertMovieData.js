@@ -1,8 +1,8 @@
 require('dotenv').config();
 const axios = require('axios');
+const pool = require('../db');
 
 const API_KEY = process.env.MOVIE_DB_API_KEY;
-const pool = require('../db');
 
 const fetchPopularMovies = async () => {
   return axios
