@@ -65,7 +65,7 @@ const insertMovieData = async () => {
   const client = await pool.connect();
   try {
     const filteredMovie = await filterOutExistingMovies(client);
-    if (!filteredMovie) {
+    if (filteredMovie.length === 0) {
       console.log('No new data found');
       return;
     }
