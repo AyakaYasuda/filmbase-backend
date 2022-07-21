@@ -1,9 +1,10 @@
 CREATE TABLE IF NOT EXISTS members(
     member_id serial,
+    name text,
     email text,
     password text,
     favorite_movies int[],
-    UNIQUE(member_id)
+    UNIQUE(member_id, email)
 );
 
 CREATE TABLE IF NOT EXISTS movies(

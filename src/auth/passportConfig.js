@@ -9,37 +9,6 @@ const pool = require('../db');
 
 module.exports = (passport) => {
   passport.use(
-    'local-signup',
-    new LocalStrategy(
-      {
-        usernameField: 'email',
-        passwordField: 'password',
-      },
-      async (email, password, done) => {
-        pool.query(
-          'SELECT * FROM members WHERE email=($1)',
-          [email],
-          (err, res) => {
-            if (err) return done(null, false);
-
-            if (res.rows.length !== 0) return done(null, false);
-
-            const passwordHash = bcrypt.hashSync(password, 10);
-
-            pool.query(
-              'INSERT INTO members (email, password, favorite_movies) VALUES($1, $2, $3)',
-              [email, passwordHash, {}],
-              (err, res) => {
-                return done(null, true);
-              }
-            );
-          }
-        );
-      }
-    )
-  );
-
-  passport.use(
     'local-login',
     new LocalStrategy(
       { usernameField: 'email', passwordField: 'password' },

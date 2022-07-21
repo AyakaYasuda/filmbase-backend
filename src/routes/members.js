@@ -10,11 +10,11 @@ const router = Router();
 router.post(
   '/signup',
   [
+    check('username').isLength({ min: 1 }),
     check('email').normalizeEmail().isEmail(),
     check('password').isLength({ min: 6 }),
   ],
   validators.authValidator,
-  passport.authenticate('local-signup', { session: false }),
   membersController.signup
 );
 

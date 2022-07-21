@@ -5,7 +5,34 @@ const pool = require('../db');
 const HttpError = require('../models/http-error');
 
 const signup = async (request, response, next) => {
-  response.status(201).end();
+  const { username, email, password } = request.body;
+
+  pool.query('SELECT * FROM members WHERE email=($1)', [email], (err, res) => {
+    if (err) {
+      const error = new HttpError('Failed to fetch user', 500);
+      return next(error);
+    }
+
+    if (res.rows.length !== 0) {
+      const error = new HttpError('User already exists', 409);
+      return next(error);
+    }
+
+    const passwordHash = bcrypt.hashSync(password, 10);
+
+    pool.query(
+      'INSERT INTO members (name, email, password, favorite_movies) VALUES($1, $2, $3, $4)',
+      [username, email, passwordHash, {}],
+      (err, res) => {
+        if (err) {
+          const error = new HttpError('Failed to create new user', 500);
+          return next(error);
+        }
+
+        response.status(201);
+      }
+    );
+  });
 };
 
 const login = async (request, response, next) => {
