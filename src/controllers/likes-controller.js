@@ -15,12 +15,6 @@ const getLikesByMemberId = async (request, response, next) => {
         );
         return next(error);
       }
-
-      if (res.rows && res.rows.length === 0) {
-        const error = new HttpError('Likes not found', 404);
-        return next(error);
-      }
-
       response.status(200).json({ reviews: res.rows });
     }
   );
@@ -40,12 +34,6 @@ const getLikesByReviewId = async (request, response, next) => {
         );
         return next(error);
       }
-
-      if (res.rows && res.rows.length === 0) {
-        const error = new HttpError('Likes not found', 404);
-        return next(error);
-      }
-
       response.status(200).json({ members: res.rows });
     }
   );
