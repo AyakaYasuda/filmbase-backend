@@ -2,26 +2,43 @@ const pool = require('../db');
 const HttpError = require('../models/http-error');
 
 const getAllReviews = async (request, response, next) => {
-  pool.query('SELECT * FROM reviews ORDER BY review_id desc', (err, res) => {
-    if (err) {
-      const error = new HttpError('Failed to fetch all reviews');
-      return next(error);
-    }
+  pool.query(
+    `SELECT 
+        * 
+      FROM
+        reviews 
+      JOIN members on 
+        reviews.reviewer_id = members.member_id 
+      ORDER BY 
+        review_id desc;`,
+    (err, res) => {
+      if (err) {
+        const error = new HttpError('Failed to fetch all reviews');
+        return next(error);
+      }
 
-    if (res.rows && res.rows.length === 0) {
-      const error = new HttpError('Reviews not found', 404);
-      return next(error);
-    }
+      if (res.rows && res.rows.length === 0) {
+        const error = new HttpError('Reviews not found', 404);
+        return next(error);
+      }
 
-    response.status(200).json({ reviews: res.rows });
-  });
+      response.status(200).json({ reviews: res.rows });
+    }
+  );
 };
 
 const getReviewById = async (request, response, next) => {
   const reviewId = request.params.rid;
 
   pool.query(
-    'SELECT * FROM reviews WHERE review_id=($1)',
+    `SELECT 
+        * 
+      FROM
+        reviews 
+      JOIN members on 
+        reviews.reviewer_id = members.member_id 
+      WHERE
+        review_id=($1);`,
     [reviewId],
     (err, res) => {
       if (err) {
@@ -46,7 +63,16 @@ const getReviewsByMemberId = async (request, response, next) => {
   const memberId = request.params.uid;
 
   pool.query(
-    'SELECT * FROM reviews WHERE reviewer_id=($1) ORDER BY rate desc',
+    `SELECT 
+        * 
+      FROM
+        reviews 
+      JOIN members on 
+        reviews.reviewer_id = members.member_id 
+      WHERE
+        reviewer_id=($1)
+      ORDER BY
+        rate desc;`,
     [memberId],
     (err, res) => {
       if (err) {
@@ -69,10 +95,15 @@ const getReviewsByMemberId = async (request, response, next) => {
 
 const createReview = async (request, response, next) => {
   const memberId = request.params.uid;
-  const { reviewer, movieId, rate, comment } = request.body;
+  const { movieId, rate, comment } = request.body;
 
   pool.query(
-    'SELECT * FROM members WHERE member_id=($1)',
+    `SELECT 
+      * 
+    FROM 
+      members
+    WHERE 
+      member_id=($1);`,
     [memberId],
     (err, res) => {
       if (err) {
@@ -89,8 +120,8 @@ const createReview = async (request, response, next) => {
       }
 
       pool.query(
-        'INSERT INTO reviews(reviewer, reviewer_id, movie_id, rate, comment) VALUES($1, $2, $3, $4, $5)',
-        [reviewer, memberId, movieId, rate, comment],
+        'INSERT INTO reviews(reviewer_id, movie_id, rate, comment) VALUES($1, $2, $3, $4)',
+        [memberId, movieId, rate, comment],
         (err, res) => {
           if (err) {
             const error = new HttpError('Failed to create new review', 500);

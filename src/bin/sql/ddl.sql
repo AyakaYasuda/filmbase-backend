@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS members(
     email text,
     password text,
     favorite_movies int[],
-    UNIQUE(member_id, email)
+    UNIQUE(member_id)
 );
 
 CREATE TABLE IF NOT EXISTS movies(
@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS movies(
 
 CREATE TABLE IF NOT EXISTS reviews(
     review_id serial,
-    reviewer character varying(50),
     reviewer_id int,
     movie_id int,
     rate real,

@@ -1,5 +1,6 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const pool = require('../db');
 const HttpError = require('../models/http-error');
@@ -29,7 +30,7 @@ const signup = async (request, response, next) => {
           return next(error);
         }
 
-        response.status(201);
+        response.status(201).end();
       }
     );
   });
@@ -95,6 +96,7 @@ const getMemberById = async (request, response, next) => {
 
 const getFavoriteMovies = async (request, response, next) => {
   const { favoriteMoviesId } = request.body;
+  console.log(favoriteMoviesId);
 
   pool.query(
     `SELECT * FROM movies WHERE movie_id IN (${favoriteMoviesId?.join()})`,
