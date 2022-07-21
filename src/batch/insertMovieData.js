@@ -1,5 +1,6 @@
+const fetch = require('node-fetch');
+
 require('dotenv').config();
-import fetch from 'node-fetch';
 
 const API_KEY = process.env.MOVIE_DB_API_KEY;
 const pool = require('../db');
