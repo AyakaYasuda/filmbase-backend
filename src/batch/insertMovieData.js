@@ -25,23 +25,13 @@ const getAllMovies = async (client) => {
     });
 };
 
-const filterOutExistingMovies = async (client) => {
-  try {
-    // fetch movies stored in database.
-    const storedMovies = await getAllMovies(client);
-
-    // fetch movie data from The Movie Database API
-    const { results } = await fetchPopularMovies();
-
-    const moviesMap = new Map();
-    for (const movie of storedMovies) {
-      moviesMap.set(movie.movie_id, true);
-    }
-
-    return results.filter((movie) => !moviesMap.has(movie.id));
-  } catch (err) {
-    console.log(err);
+const filterOutExistingMovies = async (storedMovies, fetchedMovies) => {
+  const moviesMap = new Map();
+  for (const movie of storedMovies) {
+    moviesMap.set(movie.movie_id, true);
   }
+
+  return fetchedMovies.filter((movie) => !moviesMap.has(movie.id));
 };
 
 const createMovie = (client, movieData) => {
@@ -64,7 +54,13 @@ const insertMovieData = async () => {
   console.log(`########### Started Insert Movie Data Batch ###########`);
   const client = await pool.connect();
   try {
-    const filteredMovie = await filterOutExistingMovies(client);
+    // fetch movies stored in database.
+    const storedMovies = await getAllMovies(client);
+
+    // fetch movie data from The Movie Database API
+    const { results } = await fetchPopularMovies();
+
+    const filteredMovie = await filterOutExistingMovies(storedMovies, results);
     if (filteredMovie.length === 0) {
       console.log('No new data found');
       return;
