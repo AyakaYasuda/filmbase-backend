@@ -96,7 +96,6 @@ const getMemberById = async (request, response, next) => {
 
 const getFavoriteMovies = async (request, response, next) => {
   const { favoriteMoviesId } = request.body;
-  console.log(favoriteMoviesId);
 
   pool.query(
     `SELECT * FROM movies WHERE movie_id IN (${favoriteMoviesId?.join()})`,
