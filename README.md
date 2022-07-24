@@ -1,6 +1,8 @@
 # Filmbase - backend
 
-This is an implementation of REST APIs for [Filmbase](https://github.com/AyakaYasuda/filmbase-frontend) in Node.js with Express. Authenticates users with a username and password using Passport. The endpoints are secured using a JSON web token. 
+This is an implementation of REST APIs for [Filmbase](https://github.com/AyakaYasuda/filmbase-frontend) in Node.js with Express.  
+Authenticates users with a username and password using Passport.  
+The endpoints are secured using a JSON web token. 
 
 ## Database
 
